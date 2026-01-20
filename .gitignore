@@ -1,0 +1,32 @@
+# Node / Expo
+node_modules/
+.expo/
+.expo-shared/
+npm-debug.log
+yarn-error.log
+
+# React Native / Expo builds
+android/
+ios/
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Environment
+.env
+*.env
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS
+*.DS_Store
+Thumbs.db

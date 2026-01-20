@@ -2,11 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity} from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
-import { initializeAuth, getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
-import { initializeApp } from 'firebase/app';
-import { firebaseConfig } from '../firebaseConfig';
-
-initializeApp(firebaseConfig);
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 WebBrowser.maybeCompleteAuthSession();
 
 export default function AuthScreen(){
@@ -28,12 +24,26 @@ export default function AuthScreen(){
   }, [response]);
 
   const signUp = ()=>{
+    if (!email || !password){
+      Alert.alert('Validation', 'Please enter email and password');
+      return;
+    }
     createUserWithEmailAndPassword(auth, email, password)
+      .then(userCred => {
+        Alert.alert('Success', 'Account created.');
+      })
       .catch(e => Alert.alert('Sign up error', e.message));
   };
 
   const signIn = ()=>{
+    if (!email || !password){
+      Alert.alert('Validation', 'Please enter email and password');
+      return;
+    }
     signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        Alert.alert('Success', 'Signed in');
+      })
       .catch(e => Alert.alert('Sign in error', e.message));
   };
 

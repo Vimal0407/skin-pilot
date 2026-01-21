@@ -1,11 +1,13 @@
 import React, {useState} from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import shared from '../styles';
 
 export default function ChatScreen({onBack}){
   const [text, setText] = useState('');
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const BACKEND_BASE = global.BACKEND_URL || (Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://localhost:8000');
 
   const send = async ()=>{
     if (!text.trim()) return;
@@ -14,13 +16,14 @@ export default function ChatScreen({onBack}){
     setText('');
     setLoading(true);
     try{
-      const res = await fetch('http://10.0.2.2:8000/chat', { // Android emulator localhost mapping
+      const res = await fetch(`${BACKEND_BASE}/chat`, {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({message: userMsg.text})
       });
       const json = await res.json();
-      const reply = {id: (Date.now()+1).toString(), from: 'bot', text: json.reply || 'No reply'};
+      const replyText = json?.reply ?? json?.detail ?? 'No reply from server';
+      const reply = {id: (Date.now()+1).toString(), from: 'bot', text: replyText};
       setMessages(prev => [...prev, reply]);
     }catch(e){
       const errMsg = {id: (Date.now()+2).toString(), from: 'bot', text: 'Error: '+ e.message};
@@ -50,7 +53,7 @@ export default function ChatScreen({onBack}){
         <View style={{flexDirection:'row', gap:8, alignItems:'center'}}>
           <TextInput value={text} onChangeText={setText} placeholder='Ask about skin...' style={[shared.input, {flex:1}]} />
           <TouchableOpacity style={[shared.primaryButton, {marginLeft:8, paddingHorizontal:16}]} onPress={send} disabled={loading}>
-            <Text style={shared.primaryButtonText}>{loading ? '...' : 'Send'}</Text>
+            {loading ? <ActivityIndicator color="#fff" /> : <Text style={shared.primaryButtonText}>Send</Text>}
           </TouchableOpacity>
         </View>
       </View>

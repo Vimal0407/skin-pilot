@@ -2,7 +2,8 @@ import React, {useState} from 'react';
 import {View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity, Platform, ActivityIndicator} from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithCredential, signInAnonymously } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithCredential, signInAnonymously } from 'firebase/auth';
+import { auth } from '../firebase';
 WebBrowser.maybeCompleteAuthSession();
 
 export default function AuthScreen(){
@@ -14,7 +15,8 @@ export default function AuthScreen(){
   const [sending, setSending] = useState(false);
   const [verifying, setVerifying] = useState(false);
 
-  const auth = getAuth();
+  // use initialized auth from firebase.js
+  // const auth is imported from ../firebase
 
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId: '<YOUR_IOS_OR_ANDROID_GOOGLE_CLIENT_ID>'

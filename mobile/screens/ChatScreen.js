@@ -7,11 +7,9 @@ export default function ChatScreen({ navigation, onBack }){
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Choose a sensible default backend base depending on environment.
-  // - For Android emulators use 10.0.2.2 (AVD) or 10.0.3.2 (Genymotion)
-  // - For iOS simulator use localhost
-  // - For physical devices set global.BACKEND_URL at app startup to your machine LAN IP (e.g. http://192.168.1.42:8000)
-  const BACKEND_BASE = global.BACKEND_URL || (Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://localhost:8000');
+  // Default backend base: use hosted Render URL, allow `global.BACKEND_URL` override.
+  // Keep ability to override for development or specific devices.
+  const BACKEND_BASE = global.BACKEND_URL || 'https://skin-pilot-backend.onrender.com';
 
   const send = async ()=>{
     if (!text.trim()) return;

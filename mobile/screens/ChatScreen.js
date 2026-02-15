@@ -2,11 +2,15 @@ import React, {useState} from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import shared from '../styles';
 
-export default function ChatScreen({onBack}){
+export default function ChatScreen({ navigation, onBack }){
   const [text, setText] = useState('');
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // Choose a sensible default backend base depending on environment.
+  // - For Android emulators use 10.0.2.2 (AVD) or 10.0.3.2 (Genymotion)
+  // - For iOS simulator use localhost
+  // - For physical devices set global.BACKEND_URL at app startup to your machine LAN IP (e.g. http://192.168.1.42:8000)
   const BACKEND_BASE = global.BACKEND_URL || (Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://localhost:8000');
 
   const send = async ()=>{
@@ -34,7 +38,15 @@ export default function ChatScreen({onBack}){
   return (
     <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={shared.page}>
-        <TouchableOpacity onPress={onBack} style={{marginBottom:12}}>
+        <TouchableOpacity
+          onPress={() => {
+            if (onBack) return onBack();
+            if (navigation && navigation.canGoBack()) return navigation.goBack();
+            // fallback: navigate to Onboarding so user returns to the post-login flow
+            navigation && navigation.navigate('Onboarding');
+          }}
+          style={{marginBottom:12}}
+        >
           <Text style={{color:'#2b8aef'}}>← Back</Text>
         </TouchableOpacity>
 

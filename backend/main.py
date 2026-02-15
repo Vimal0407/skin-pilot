@@ -84,7 +84,14 @@ async def chat(req: ChatRequest):
 
         return {"reply": text}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        # Log full exception server-side, but return a safer client-facing message.
+        import traceback
+        traceback.print_exc()
+        # If the error is from OpenAI and indicates an auth issue, map to 502 with a generic message.
+        msg = str(e)
+        if 'invalid_api_key' in msg or 'Incorrect API key' in msg or '401' in msg:
+            raise HTTPException(status_code=502, detail='OpenAI authentication error (check server API key)')
+        raise HTTPException(status_code=502, detail='OpenAI service error')
 
 
 # Simple in-memory OTP store for demo purposes: { phone: (code, expiry_ts) }
